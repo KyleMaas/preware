@@ -35,10 +35,22 @@ enyo.singleton({
         return this.request.go(parameters);
     },
     version: function (callback) {
-        return this.doServiceCall(callback, "version");
+	if(typeof PalmServiceBridge == "undefined") {
+		enyo.log("Returning mock version data.");
+		callback({returnValue: true, version: "unknown", apiVersion: 17});
+	}
+	else {
+	        return this.doServiceCall(callback, "version");
+	}
     },
     getMachineName: function (callback) {
-        return this.doServiceCall(callback, "getMachineName");
+	if(typeof PalmServiceBridge == "undefined") {
+		enyo.log("Returning mock machine name data.");
+		callback({returnValue: true});
+	}
+	else {
+        	return this.doServiceCall(callback, "getMachineName");
+	}
     },
     impersonate: function (callback, id, service, method, params) {
         var parameter = {
@@ -48,7 +60,23 @@ enyo.singleton({
                 params: params,
                 subscribe: params.subscribe ? true : false
             };
-        return this.doServiceCall(callback, "impersonate", parameter);
+	if(typeof PalmServiceBridge == "undefined") {
+		enyo.log("Returning mock data for impersonate call.");
+		switch(service + "." + method) {
+			case "com.palm.deviceprofile.getDeviceProfile":
+				callback({returnValue: true, deviceInfo: { deviceId: "debug", nduId: "debug"}});
+				break;
+			case "com.palm.deviceprofile.getDeviceId":
+				callback({returnValue: true, deviceId: "debug"});
+				break;
+			case "com.palm.db.get":
+				callback({returnValue: false});
+				break;
+		}
+	}
+	else {
+        	return this.doServiceCall(callback, "impersonate", parameter);
+	}
     },
     setAuthParams: function (callback, deviceId, token) {
         var params = { //parameters to the service go as parameters to the go method.
@@ -58,7 +86,13 @@ enyo.singleton({
         return this.doServiceCall(callback, "setAuthParams", params);
     },
     list_configs: function (callback) {
-        return this.doServiceCall(callback, "getConfigs");
+	if(typeof PalmServiceBridge == "undefined") {
+		enyo.log("Returning mock data for list_configs.");
+		callback({returnValue: true, configs: []});
+	}
+	else {
+        	return this.doServiceCall(callback, "getConfigs");
+	}
     },
     setConfigState: function (callback, config, enabled) {
         var params = {
@@ -79,7 +113,13 @@ enyo.singleton({
         return this.doServiceCall(callback, "update", {subscribe: true});
     },
     getDirListing: function (callback, dir) {
-        return this.doServiceCall(callback, "getDirListing", {directory: dir});
+	if(typeof PalmServiceBridge == "undefined") {
+		enyo.log("Returning mock dir listing data.");
+		callback({returnValue: true, contents: []});
+	}
+	else {
+	        return this.doServiceCall(callback, "getDirListing", {directory: dir});
+	}
     },
     downloadFeed: function (callback, gzipped, feed, url) {
         var params = {
@@ -101,7 +141,13 @@ enyo.singleton({
         var params = {
             subscribe: true
         };
-        return this.doServiceCall(callback, "getStatusFile", params);
+	if(typeof PalmServiceBridge == "undefined") {
+		enyo.log("Returning mock data for status file.");
+		callback({returnValue: true});
+	}
+	else {
+	        return this.doServiceCall(callback, "getStatusFile", params);
+	}
     },
     install: function (callback, filename, url) {
         var params = {
