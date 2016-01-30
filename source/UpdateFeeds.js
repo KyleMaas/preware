@@ -172,6 +172,10 @@ enyo.singleton({
                     (inResponse.wifi && inResponse.wifi.state === "connected"))) {
             this.hasNet = true;
         }
+	if(typeof PalmServiceBridge == "undefined") {
+		this.log("Running under the debug environment.  Assuming internet connectivity.");
+		this.hasNet = true;
+	}
         this.log("Got Connection Status. Connection: " + this.hasNet);
         //this.log("Complete Response: " + JSON.stringify(inResponse));
 

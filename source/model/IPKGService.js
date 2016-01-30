@@ -88,7 +88,9 @@ enyo.singleton({
     list_configs: function (callback) {
 	if(typeof PalmServiceBridge == "undefined") {
 		enyo.log("Returning mock data for list_configs.");
-		callback({returnValue: true, configs: []});
+		callback({returnValue: true, configs: [
+				{ config: "webos-ports.conf", enabled: true, contents: "src/gz webosports http://feeds.webos-ports.org/webos-ports/all" }
+			]});
 	}
 	else {
         	return this.doServiceCall(callback, "getConfigs");
@@ -128,7 +130,12 @@ enyo.singleton({
             feed: feed,
             url: url
         };
-        return this.doServiceCall(callback, "downloadFeed", params);
+	if(typeof PalmServiceBridge == "undefined") {
+		callback({ returnValue: true, stage: "completed" });
+	}
+	else {
+        	return this.doServiceCall(callback, "downloadFeed", params);
+	}
     },
     getListFile: function (callback, feed) {
         var params = {
